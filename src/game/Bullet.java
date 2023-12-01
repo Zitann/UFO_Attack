@@ -1,6 +1,7 @@
 package game;
 
 import static common.CommonConstants.BULLET_IMG_PATH;
+import static common.CommonConstants.REPAINT_INTERVAL;
 import static utils.Utils.sleep;
 
 public class Bullet {
@@ -13,7 +14,7 @@ public class Bullet {
         this.imgPath = BULLET_IMG_PATH;
         new Thread(() -> {
             while (true) {
-                sleep(30);
+                sleep(REPAINT_INTERVAL);
                 this.y += 10;
             }
         }).start();

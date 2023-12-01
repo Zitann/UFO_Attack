@@ -7,14 +7,12 @@ public class UFO {
     private int y;
     private int moveSpeed;
     private int bulletSpeed;
-    private int type;
     private String imgPath;
     private Bullet bullet = null;
     private int lastShootTime = (int) System.currentTimeMillis();
     public UFO(int x, int y, int type) {
         this.x = x;
         this.y = y;
-        this.type = type;
         switch (type) {
             case 1:
                 moveSpeed = 5;
@@ -35,7 +33,7 @@ public class UFO {
         // 启动线程控制自动左右移动
         new Thread(() -> {
             while (true) {
-                sleep(30);
+                sleep(REPAINT_INTERVAL);
                 this.x += moveSpeed;
                 if (this.x < 10 || this.x > FRAME_WIDTH - 50) {
                     moveSpeed = -moveSpeed;
@@ -52,15 +50,6 @@ public class UFO {
     }
     public int getY() {
         return y;
-    }
-    public int getMoveSpeed() {
-        return moveSpeed;
-    }
-    public int getBulletSpeed() {
-        return bulletSpeed;
-    }
-    public int getType() {
-        return type;
     }
     public String getImgPath() {
         return imgPath;

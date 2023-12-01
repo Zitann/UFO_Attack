@@ -4,6 +4,7 @@ import utils.Utils;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
 import java.util.Random;
 
 import static common.CommonConstants.*;
@@ -13,24 +14,24 @@ public class GameFrame extends Frame implements Runnable{
     private static int gameState;
     //菜单指向
     private static int menuIndex;
-    //标题栏的高度
-    public static int titleBarH;
     //1：定义一张和屏幕大小一致的图片
     private BufferedImage bufImg = new BufferedImage(FRAME_WIDTH,FRAME_HEIGHT,BufferedImage.TYPE_4BYTE_ABGR);
     //背景图片
     private Image backgroundImg = null;
-    private static int score = 0;
-    private static int shotsLeft = 15;
-    private static int citiesLeft = 4;
-    private static int shieldLeft = 2;
-    private static int enemyCount = 0;
+    private static int score;
+    private static int shotsLeft;
+    private static int citiesLeft;
+    private static int shieldLeft;
+    private static int enemyCount;
     private UFO[] ufos = new UFO[ENEMY_MAX_COUNT];
-    private City[] cities = new City[4];
+    private City[] cities = new City[CITY_COUNT];
     private static int lastEnemyBornTime = 0;
     private static final Random random = new Random();
     public GameFrame() {
         initFrame();
         initEventListener();
+        // 初始化random
+        random.setSeed(System.currentTimeMillis());
         //启动用于刷新窗口的线程
         new Thread(new Runnable() {
             @Override
@@ -55,11 +56,6 @@ public class GameFrame extends Frame implements Runnable{
         setResizable(false);
         //设置窗口可见
         setVisible(true);
-
-        //求标题栏的高度
-        titleBarH = getInsets().top;
-        // 初始化random
-        random.setSeed(System.currentTimeMillis());
     }
 
     //添加按键监听事件
@@ -110,7 +106,7 @@ public class GameFrame extends Frame implements Runnable{
                 if(gameState == STATE_RUN) {
                     shotsLeft--;
                     for (int i = 0; i < ENEMY_MAX_COUNT; i++) {
-                        if (ufos[i] != null && Utils.distanse(e.getX(), e.getY(), ufos[i].getX(), ufos[i].getY()) < 200) {
+                        if (ufos[i] != null && Utils.distanse(e.getX(), e.getY(), ufos[i].getX(), ufos[i].getY()) < DISROTY_UFO_DIS) {
                             ufos[i] = null;
                             score += DISROTY_UFO_SCORE;
                             break;
@@ -131,7 +127,9 @@ public class GameFrame extends Frame implements Runnable{
         if(backgroundImg == null){
             backgroundImg = Utils.getImage(BACKGROUND_IMG_PATH);
             // 缩放到窗口大小
-            backgroundImg = backgroundImg.getScaledInstance(FRAME_WIDTH, FRAME_HEIGHT, Image.SCALE_DEFAULT);
+            if (backgroundImg != null) {
+                backgroundImg = backgroundImg.getScaledInstance(FRAME_WIDTH, FRAME_HEIGHT, Image.SCALE_DEFAULT);
+            }
         }
         g.drawImage(backgroundImg, 0, 0, null);
 
@@ -224,7 +222,7 @@ public class GameFrame extends Frame implements Runnable{
         }
         if(shotsLeft <= 0 || citiesLeft <= 0) {
             setGameState(STATE_LOST);
-        }else if(enemyCount == ENEMY_MAX_COUNT && citiesLeft > 0) {
+        }else if(enemyCount == ENEMY_MAX_COUNT) {
             boolean win = true;
             for (int i = 0; i < ENEMY_MAX_COUNT; i++) {
                 if (ufos[i] != null) {
@@ -276,7 +274,7 @@ public class GameFrame extends Frame implements Runnable{
             case KeyEvent.VK_ENTER:
                 switch(menuIndex){
                     case 0:
-                        startGame();
+                        initGame();
                         break;
                     case 1:
                         setGameState(STATE_HELP);
@@ -319,7 +317,11 @@ public class GameFrame extends Frame implements Runnable{
 
     //游戏通关的按键处理
     private void keyPressedEventWin(int keyCode) {
-        keyPressedEventLost(keyCode);
+        if(keyCode == KeyEvent.VK_ESCAPE){
+            System.exit(0);
+        }else if(keyCode == KeyEvent.VK_ENTER){
+            setGameState(STATE_MENU);
+        }
     }
 
     /**
@@ -360,16 +362,14 @@ public class GameFrame extends Frame implements Runnable{
         g1.drawImage(bufImg,0,0,null);
     }
 
-    private void startGame() {
+    private void initGame() {
         setGameState(STATE_RUN);
-        score = 0;
-        shotsLeft = 15;
-        citiesLeft = 4;
-        shieldLeft = 2;
-        enemyCount = 0;
-        for (int i = 0; i < ENEMY_MAX_COUNT; i++) {
-            ufos[i] = null;
-        }
+        score = ZERO;
+        shotsLeft = INIT_BULLET_COUNT;
+        citiesLeft = CITY_COUNT;
+        shieldLeft = INIT_SHIELD_COUNT;
+        enemyCount = ZERO;
+        Arrays.fill(ufos, null);
     }
 
     //获得游戏状态和修改游戏状态

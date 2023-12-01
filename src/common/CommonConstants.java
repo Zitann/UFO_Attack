@@ -36,20 +36,32 @@ public class CommonConstants {
 
     //字体
     public static final Font GAME_FONT = new Font("宋体",Font.BOLD,24);
-    public static final Font SMALL_FONT = new Font("宋体",Font.BOLD,12);
-
+    /*********************游戏常量相关*********************/
+    //游戏帧数
     public static final int REPAINT_INTERVAL = 30;
     //最大敌人数量
     public static final int ENEMY_MAX_COUNT = 10;
+    //敌人出生间隔
     public static final int ENEMY_BORN_INTERVAL = 3000;
-
+    //敌人开火间隔
     public static final double ENEMY_FIRE_INTERVAL = 1000;
+    //城市数量
+    public static final int CITY_COUNT = 4;
+    //城市的y坐标
     public static final int CITY_Y = 560;
+    //分数
     public static final int DISROTY_UFO_SCORE = 200;
     public static final int DISROTY_CITY_SCORE = -100;
+    //城市被摧毁的距离
     public static final int DISROTY_CITY_DIS = 50;
-
-    // 资源文件
+    //UFO被摧毁的距离
+    public static final int DISROTY_UFO_DIS = 200;
+    public static final int ZERO = 0;
+    //初始子弹数量
+    public static final int INIT_BULLET_COUNT = 15;
+    //初始护盾数量
+    public static final int INIT_SHIELD_COUNT = 2;
+    /*********************游戏资源相关*********************/
     public static final String BACKGROUND_IMG_PATH = "res/Background.bmp";
     public static final String CITY_IMG_PATH = "res/City.gif";
     public static final String CITY_BURN_IMG_PATH = "res/CityBurn.gif";
