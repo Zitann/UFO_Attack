@@ -82,10 +82,10 @@ public class GameFrame extends Frame implements Runnable{
                         keyPressedEventMenu(keyCode);
                         break;
                     case STATE_HELP:
-                        keyPressedEventHelp(keyCode);
+                        keyPressedEventHelp();
                         break;
                     case STATE_ABOUT:
-                        keyPressedEventAbout(keyCode);
+                        keyPressedEventAbout();
                         break;
                     case STATE_RUN:
                         keyPressedEventRun(keyCode);
@@ -308,12 +308,12 @@ public class GameFrame extends Frame implements Runnable{
     }
 
     //帮助状态下的按键的处理
-    private void keyPressedEventHelp(int keyCode) {
+    private void keyPressedEventHelp() {
         setGameState(STATE_MENU);
     }
 
     //关于状态下的按键的处理
-    private void keyPressedEventAbout(int keyCode) {
+    private void keyPressedEventAbout() {
         setGameState(STATE_MENU);
     }
 
