@@ -14,18 +14,18 @@ public class GameFrame extends Frame implements Runnable{
     private static int gameState;
     //菜单指向
     private static int menuIndex;
-    //1：定义一张和屏幕大小一致的图片
-    private BufferedImage bufImg = new BufferedImage(FRAME_WIDTH,FRAME_HEIGHT,BufferedImage.TYPE_4BYTE_ABGR);
+    //定义一张和屏幕大小一致的图片
+    private final BufferedImage bufImg = new BufferedImage(FRAME_WIDTH,FRAME_HEIGHT,BufferedImage.TYPE_4BYTE_ABGR);
     //背景图片
     private Image backgroundImg = null;
-    private static int score;
-    private static int shotsLeft;
-    private static int citiesLeft;
-    private static int shieldLeft;
-    private static int enemyCount;
+    private static int score;  // 得分
+    private static int shotsLeft;  // 剩余子弹
+    private static int citiesLeft;  // 剩余城市
+    private static int shieldLeft;  // 剩余护盾
+    private static int enemyCount;  // 当前敌人数量
     private UFO[] ufos = new UFO[ENEMY_MAX_COUNT];
     private City[] cities = new City[CITY_COUNT];
-    private static int lastEnemyBornTime = 0;
+    private static int lastEnemyBornTime = 0;  // 上次敌人出生时间
     private static final Random random = new Random();
     public GameFrame() {
         initFrame();
@@ -100,6 +100,7 @@ public class GameFrame extends Frame implements Runnable{
             }
 
         });
+        //添加鼠标监听事件,在游戏运行状态下，鼠标点击事件的处理
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -117,13 +118,9 @@ public class GameFrame extends Frame implements Runnable{
         });
     }
 
-
-    /**
-     * 绘制菜单状态下的内容
-     *
-     * @param g 画笔对象，系统提供的
-     */
+    //绘制菜单状态下的内容
     private void drawMenu(Graphics g) {
+        //绘制背景图片
         if(backgroundImg == null){
             backgroundImg = Utils.getImage(BACKGROUND_IMG_PATH);
             // 缩放到窗口大小
@@ -133,6 +130,7 @@ public class GameFrame extends Frame implements Runnable{
         }
         g.drawImage(backgroundImg, 0, 0, null);
 
+        //绘制菜单项
         final int STR_WIDTH = 76;
         int x = FRAME_WIDTH - STR_WIDTH >> 1;
         int y = FRAME_HEIGHT / 3;
@@ -149,8 +147,12 @@ public class GameFrame extends Frame implements Runnable{
         }
     }
 
+    //绘制帮助状态下的内容
     private void drawHelp(Graphics g) {
+        //绘制背景图片
         g.drawImage(backgroundImg, 0, 0, null);
+
+        //绘制帮助内容
         g.setFont(GAME_FONT);
         g.setColor(Color.WHITE);
         final int STR_WIDTH = 76;
@@ -163,8 +165,12 @@ public class GameFrame extends Frame implements Runnable{
         g.drawString("任意键返回主菜单", 310, 500);
     }
 
+    //绘制关于状态下的内容
     private void drawAbout(Graphics g) {
+        //绘制背景图片
         g.drawImage(backgroundImg, 0, 0, null);
+
+        //绘制关于内容
         g.setFont(GAME_FONT);
         g.setColor(Color.WHITE);
         final int STR_WIDTH = 76;
@@ -178,7 +184,9 @@ public class GameFrame extends Frame implements Runnable{
 
     }
 
+    //绘制游戏运行状态下的内容
     private void drawRun(Graphics g) {
+        //绘制相关的游戏内容
         g.drawImage(backgroundImg, 0, 0, null);
         g.setFont(GAME_FONT);
         g.setColor(Color.WHITE);
@@ -186,10 +194,11 @@ public class GameFrame extends Frame implements Runnable{
         g.drawString("剩余城市：" + citiesLeft, 600, 70);
         g.drawString("剩余子弹：" + shotsLeft, 20, 100);
         g.drawString("剩余护盾：" + shieldLeft, 600, 100);
+
+        //绘制城市，并判断城市是否被摧毁
         for (int i = 0; i < cities.length; i++) {
             if (cities[i] == null) {
                 cities[i] = new City();
-                System.out.println("city " + cities[i].getX() + " created");
             }else{
                 for(int j = 0; j < ENEMY_MAX_COUNT; j++) {
                     if (!cities[i].isDistory() && ufos[j] != null && ufos[j].getBullet() != null && Utils.distanse(cities[i].getX(), cities[i].getY(), ufos[j].getBullet().getX(), ufos[j].getBullet().getY()) < DISROTY_CITY_DIS) {
@@ -207,7 +216,8 @@ public class GameFrame extends Frame implements Runnable{
                 g.drawImage(Utils.getImage(cities[i].getImgPath()), cities[i].getX(), cities[i].getY(), null);
             }
         }
-        //在后台线程中每隔5秒钟生成一个UFO
+
+        //每隔5秒钟生成一个UFO
         if (enemyCount < ENEMY_MAX_COUNT && (lastEnemyBornTime == 0 || (int)System.currentTimeMillis() - lastEnemyBornTime > ENEMY_BORN_INTERVAL)) {
             ufos[enemyCount++] = new UFO(random.nextInt(100,600), random.nextInt(100,400), random.nextInt(3) + 1);
             lastEnemyBornTime = (int) System.currentTimeMillis();
@@ -220,6 +230,8 @@ public class GameFrame extends Frame implements Runnable{
                 }
             }
         }
+
+        //判断游戏是否结束
         if(shotsLeft <= 0 || citiesLeft <= 0) {
             setGameState(STATE_LOST);
         }else if(enemyCount == ENEMY_MAX_COUNT) {
@@ -235,6 +247,8 @@ public class GameFrame extends Frame implements Runnable{
             }
         }
     }
+
+    //绘制游戏结束状态下的内容
     private void drawLost(Graphics g) {
         g.drawImage(Utils.getImage(EARTHB_IMG_PATH), 0, 0, null);
         g.setFont(GAME_FONT);
@@ -245,6 +259,8 @@ public class GameFrame extends Frame implements Runnable{
         g.drawString(OVER_STR0,10,FRAME_HEIGHT-20);
         g.drawString(OVER_STR1,FRAME_WIDTH-200,FRAME_HEIGHT-20);
     }
+
+    //绘制游戏通关状态下的内容
     private void drawWin(Graphics g){
         g.drawImage(Utils.getImage(EARTHA_IMG_PATH), 0, 0, null);
         g.setFont(GAME_FONT);
@@ -256,6 +272,7 @@ public class GameFrame extends Frame implements Runnable{
         g.drawString(OVER_STR0,10,FRAME_HEIGHT-20);
         g.drawString(OVER_STR1,FRAME_WIDTH-200,FRAME_HEIGHT-20);
     }
+
     //菜单状态下的按键的处理
     private void keyPressedEventMenu(int keyCode) {
         switch (keyCode) {
@@ -289,10 +306,12 @@ public class GameFrame extends Frame implements Runnable{
                 break;
         }
     }
+
     //帮助状态下的按键的处理
     private void keyPressedEventHelp(int keyCode) {
         setGameState(STATE_MENU);
     }
+
     //关于状态下的按键的处理
     private void keyPressedEventAbout(int keyCode) {
         setGameState(STATE_MENU);
@@ -329,13 +348,11 @@ public class GameFrame extends Frame implements Runnable{
      * 该方法负责了所有的绘制的内容，所有需要在屏幕中显式的
      * 内容，都要在该方法内调用。该方法不能主动调用。必须通过调用
      * repaint(); 去回调该方法。
-     *
      * @param g1 系统提供的画笔，系统进行初始化
      */
     public void update(Graphics g1) {
-        //2：得到图片的画笔
         Graphics g = bufImg.getGraphics();
-        //3: 使用图片画笔将所有的内容会知道图片上
+        //根据不同的游戏状态，绘制不同的内容
         g.setFont(GAME_FONT);
         switch (gameState) {
             case STATE_MENU:
@@ -358,10 +375,11 @@ public class GameFrame extends Frame implements Runnable{
                 break;
         }
 
-        //4:使用系统画笔，将图片绘制到frame上来
+        //使用系统画笔，将图片绘制到frame上来
         g1.drawImage(bufImg,0,0,null);
     }
 
+    //初始化游戏
     private void initGame() {
         setGameState(STATE_RUN);
         score = ZERO;
@@ -372,12 +390,12 @@ public class GameFrame extends Frame implements Runnable{
         Arrays.fill(ufos, null);
     }
 
-    //获得游戏状态和修改游戏状态
+    //修改游戏状态
     public static void setGameState(int gameState) {
         GameFrame.gameState = gameState;
     }
 
-
+    //启动用于刷新窗口的线程
     @Override
     public void run() {
         while(true){

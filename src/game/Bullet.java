@@ -5,13 +5,14 @@ import static common.CommonConstants.REPAINT_INTERVAL;
 import static utils.Utils.sleep;
 
 public class Bullet {
-    private int x;
+    private final int x;
     private int y;
-    private String imgPath;
+    private final String imgPath;
     public Bullet(int x, int y) {
         this.x = x;
         this.y = y;
         this.imgPath = BULLET_IMG_PATH;
+        // 启动线程控制子弹的自动下落
         new Thread(() -> {
             while (true) {
                 sleep(REPAINT_INTERVAL);

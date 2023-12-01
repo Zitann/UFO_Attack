@@ -4,29 +4,30 @@ import static common.CommonConstants.*;
 import static utils.Utils.sleep;
 public class UFO {
     private int x;
-    private int y;
-    private int moveSpeed;
-    private int bulletSpeed;
+    private final int y;
+    private int moveSpeed;  // 移动速度
+    private int bulletTime;  // 子弹发射间隔
     private String imgPath;
     private Bullet bullet = null;
-    private int lastShootTime = (int) System.currentTimeMillis();
+    private int lastShootTime = (int) System.currentTimeMillis();   // 上次发射子弹的时间
     public UFO(int x, int y, int type) {
         this.x = x;
         this.y = y;
+        // 根据不同的类型设置不同的移动速度和子弹发射间隔
         switch (type) {
             case 1:
                 moveSpeed = 5;
-                bulletSpeed = 1;
+                bulletTime = 1;
                 imgPath = UFO1_IMG_PATH;
                 break;
             case 2:
                 moveSpeed = 7;
-                bulletSpeed = 3;
+                bulletTime = 3;
                 imgPath = UFO2_IMG_PATH;
                 break;
             case 3:
                 moveSpeed = 10;
-                bulletSpeed = 4;
+                bulletTime = 4;
                 imgPath = UFO3_IMG_PATH;
                 break;
         }
@@ -38,7 +39,8 @@ public class UFO {
                 if (this.x < 10 || this.x > FRAME_WIDTH - 50) {
                     moveSpeed = -moveSpeed;
                 }
-                if((int)System.currentTimeMillis() - lastShootTime > bulletSpeed*ENEMY_FIRE_INTERVAL) {
+                // 根据子弹发射间隔控制子弹的发射
+                if((int)System.currentTimeMillis() - lastShootTime > bulletTime *ENEMY_FIRE_INTERVAL) {
                     lastShootTime = (int)System.currentTimeMillis();
                     bullet = new Bullet(this.x, this.y + 50);
                 }
@@ -57,7 +59,6 @@ public class UFO {
     public Bullet getBullet() {
         return bullet;
     }
-
     public void setBullet(Bullet bullet) {
         this.bullet = bullet;
     }
