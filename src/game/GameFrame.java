@@ -388,6 +388,7 @@ public class GameFrame extends Frame implements Runnable{
         shieldLeft = INIT_SHIELD_COUNT;
         enemyCount = ZERO;
         Arrays.fill(ufos, null);
+        Arrays.fill(cities, null);
     }
 
     //пч╦дсно╥в╢л╛
